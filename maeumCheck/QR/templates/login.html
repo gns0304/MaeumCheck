@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+{% load static %}
+{% load socialaccount %}
+{% providers_media_js %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<body>
+
+<div class="panel panel-default user-panel">
+    <div class="panel-heading">
+        소셜로그인
+    </div>
+    <div class="panel-body text-center">
+
+        <div class="pull-right">
+            <a href="{% provider_login_url 'naver'%}">
+                <img src="{% static "img/naver_id.PNG" %}"/>
+            </a>
+        </div>
+
+    </div>
+</div>
+
+
+</body>
+</html>
