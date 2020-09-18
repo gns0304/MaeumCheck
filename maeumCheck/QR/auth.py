@@ -1,7 +1,9 @@
 import string
 import random
 import datetime
+
 from django.shortcuts import get_object_or_404
+from django.http import HttpResponse
 
 import os
 import django
@@ -10,7 +12,7 @@ django.setup()
 from QR.models import *
 
 import qrcode
-from django.http import HttpResponse
+
 
 
 def generateToken(type):
@@ -45,7 +47,7 @@ def registerToken(type, spaceId, day):
         placeQRToken = PlaceQRToken()
         token = generateToken(0)
         placeQRToken.token = token
-        placeQRToken.place = Place(pk=spaceId)
+        placeQRToken.target = Place(pk=spaceId)
         placeQRToken.generated_at = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         placeQRToken.expired_at = (datetime.datetime.now() + datetime.timedelta(days=day)).strftime('%Y-%m-%d')
         placeQRToken.save()
@@ -61,7 +63,7 @@ def registerToken(type, spaceId, day):
         meetingQRToken = MeetingQRToken()
         token = generateToken(1)
         meetingQRToken.token = token
-        meetingQRToken.meeting = Meeting(pk=spaceId)
+        meetingQRToken.target = Meeting(pk=spaceId)
         meetingQRToken.generated_at = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         meetingQRToken.expired_at = (datetime.datetime.now() + datetime.timedelta(days=day)).strftime('%Y-%m-%d')
         meetingQRToken.save()
