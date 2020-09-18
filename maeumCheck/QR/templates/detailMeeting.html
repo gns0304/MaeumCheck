@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        #toast{width: 250px; height: 20px; height:auto; position: fixed; left: 50%; margin-left:-125px; bottom: 100px; z-index: 9999; background-color: #383838; color: #F0F0F0; padding: 10px; text-align:center; border-radius: 2px; -webkit-box-shadow: 0px 0px 24px -1px rgba(56, 56, 56, 1); -moz-box-shadow: 0px 0px 24px -1px rgba(56, 56, 56, 1); box-shadow: 0px 0px 24px -1px rgba(56, 56, 56, 1);}
+    </style>
+</head>
+<body>
+
+<h1>{{ meeting.name }}</h1>
+<p>{{ meeting.address }}</p>
+<img id="QRcode" src="{{ codeQR }}" token="{{ token }}">
+<input type="button" id="refresh" value="모임등록">
+
+<div id="toast" style="display: none;">hello</div>
+
+<script>
+    check = setInterval(function () { // .like 버튼을 클릭 감지
+        var token= $("#QRcode").attr('token');
+        $.ajax({ // ajax로 서버와 통신
+            type: "POST", // 데이터를 전송하는 방법
+            url: "{% url 'refreshQR' '1' %}", // 통신할 url을 지정
+            data: {
+                'token': token,
+                "id":"{{ meeting.id }}",
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                dataType: "json",
+            },
+            success: function (response) { // 성공
+                if (response.type == 1) {
+                    $("#QRcode").attr('src', response.codeQR);
+                    $("#QRcode").attr('token', response.token);
+                    $('#toast').fadeIn(500).delay(1100).fadeOut(500);
+                };
+            },
+        });
+    },3000)
+</script>
+
+</body>
+</html>

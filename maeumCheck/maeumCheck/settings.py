@@ -55,6 +55,8 @@ SOCIALACCOUNT_PROVIDERS = {
 DEBUG = True
 
 ALLOWED_HOSTS = ["127.0.0.1"]
+DEFAULT_PORT = ["8000"]
+DEFAULT_DOMAIN = "http://{}:{}".format(ALLOWED_HOSTS[0], DEFAULT_PORT[0])
 
 
 # Application definition
@@ -74,7 +76,12 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.naver',
+    'allauth.socialaccount.providers.kakao',
+
+
+
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -175,3 +182,7 @@ ACCOUNT_USERNAME_REQUIRED = False
 LOGIN_URL = '/login'
 LOGIN_REDIRECT_URL = '/'
 
+# policy
+
+TOKEN_LENGTH = 50
+RETENTION_PERIOD = 30

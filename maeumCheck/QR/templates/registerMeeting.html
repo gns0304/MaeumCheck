@@ -1,0 +1,49 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.js"></script>
+    <script src="{% static "js/DaumPostcode.js" %}"></script>
+    <script src="{% static "js/validateCheck.js" %}"></script>
+
+</head>
+<body>
+
+<form id="createPlace" action="{% url 'createMeeting' %}" method="post">
+
+    {% csrf_token %}
+
+    <div>
+      <input type="text" name="name" id="name" required>
+    </div>
+
+    <div>
+        <input type="text" id="postcode" name="postcode" placeholder="우편번호" required>
+        <input type="button" onclick="execDaumPostcode()" value="우편번호 찾기"><br>
+        <input type="text" id="roadAddress" name="roadAddress" placeholder="도로명주소">
+        <input type="text" id="jibunAddress" name ="jibunAddress" placeholder="지번주소" >
+        <span id="guide" style="color:#999;display:none"></span>
+        <input type="text" id="detailAddress" name="detailAddress" placeholder="상세주소" >
+        <input type="text" id="extraAddress" name= "extraAddress" placeholder="참고항목" >
+    </div>
+
+    <div>
+        <input type="date" id="expiredDate" name="expiredDate" required>
+    </div>
+
+    <input type="submit" id="submit" value="모임등록">
+
+</form>
+
+
+
+
+</body>
+</html>

@@ -1,8 +1,6 @@
 from django.db import models
 from model_utils.managers import InheritanceManager
-
-
-# Create your models here.
+from django.conf import settings
 
 
 # Space Models
@@ -10,8 +8,12 @@ from model_utils.managers import InheritanceManager
 
 class Space(models.Model):
     name = models.CharField(max_length = 64)
-    owner = models.CharField(max_length = 64) #임시 공간 관리자 Field
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True)
+    postcode = models.CharField(max_length=5, null=False, blank=False)
+    address = models.CharField(max_length=100, null=False, blank=False)
+    recentQRToken = models.CharField(max_length=settings.TOKEN_LENGTH, null=True, blank=True)
+    tokenRegistered_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -21,12 +23,15 @@ class Space(models.Model):
 
 
 class Place(Space):
-    maxPeople = models.IntegerField()
-    nowPeople = models.IntegerField()
+    maxPeople = models.IntegerField(null=False, blank=False)
+    nowPeople = models.IntegerField(null=False, blank=False)
+    congestion = models.IntegerField(null=False, blank=False)
+
 
 
 class Meeting(Space):
     expired_at = models.DateField()
+
 
 
 # Randomized QR Address Models
@@ -35,33 +40,31 @@ class Meeting(Space):
 class QRToken(models.Model):
     generated_at = models.DateTimeField(auto_now_add=True)
     expired_at = models.DateField()
-    token = models.CharField(max_length=30)
+    token = models.CharField(max_length=settings.TOKEN_LENGTH)
 
     class Meta:
         abstract = True
 
 
 class PlaceQRToken(QRToken):
-    place = models.ForeignKey(Place, on_delete=models.PROTECT)
+    target = models.ForeignKey(Place, on_delete=models.PROTECT)
 
 
 class MeetingQRToken(QRToken):
-    meeting = models.ForeignKey(Meeting, on_delete=models.PROTECT)
+    target = models.ForeignKey(Meeting, on_delete=models.PROTECT)
 
 
 # Visit Record Models
 
 
 class Record(models.Model):
-    visitor = models.CharField(max_length = 64)
-    email = models.EmailField()
+    visitor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     visited_at = models.DateTimeField(auto_now_add=True)
     objects = InheritanceManager()
 
-
 class PlaceRecord(Record):
-    placeToken = models.ForeignKey(PlaceQRToken, on_delete=models.PROTECT)
+    Token = models.ForeignKey(PlaceQRToken, on_delete=models.PROTECT)
 
 
 class MeetingRecord(Record):
-    meetingToken = models.ForeignKey(MeetingQRToken, on_delete=models.PROTECT)
+    Token = models.ForeignKey(MeetingQRToken, on_delete=models.PROTECT)
