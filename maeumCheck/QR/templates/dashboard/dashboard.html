@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{%  block template %}
+    {% load static %}
+{% endblock %}
+
+{% block title %}
+    대시보드 - 마음체크
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/stylesheet_base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/stylesheet_dashboard.css' %}">
+{% endblock %}
+
+{% block body %}
+
+    <div id ="container">
+        <div id = "title" >
+            <h4><a href="{% url 'logout' %}">로그아웃</a></h4>
+            <h2>{{ username }}님</h2>
+            <h3>오늘도 즐거운 하루 보내세요!</h3>
+        </div>
+
+        <div id = "panel">
+
+            <div class = "recent">
+                <div class="panel-title">
+                    <div class="panel-title-text">
+                        <h1>최근 생성된 공간정책</h1>
+                    </div>
+                    <div class="btn btn_pink" id="see-all-btn">
+                        <a href="{% url 'listPlace' %}">더보기</a>
+                    </div>
+                </div>
+                <div class = "panel-object">
+                    {% for place in places.all %}
+                        <h2> {{ place.name }}</h2>
+                        <p>{{ place.address }}</p>
+                            {%  if place.congestion == 0 %}
+                                <div class = "s_btn btn_green" id="congestion-btn">
+                                    여유
+                                </div>
+                            {% elif place.congestion == 1 %}
+                                <div class = "s_btn btn_green" id="congestion-btn">
+                                    보통
+                                </div>
+                            {% elif place.congestion == 2 %}
+                                <div class = "s_btn btn_green" id="congestion-btn">
+                                    혼잡
+                                </div>
+                            {%  endif %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class = "recent">
+                <div class="panel-title">
+                    <div class="panel-title-text">
+                        <h1>최근 생성된 모임정책</h1>
+                    </div>
+                    <div class="btn btn_pink" id="see-all-btn">
+                        <a href="{% url 'listMeeting' %}">더보기</a>
+                    </div>
+                </div>
+            <div class = "panel-object">
+                {% for meeting in meetings.all %}
+                    <h2> {{ meeting.name }}</h2>
+                    <p> {{ meeting.address }}</p>
+                        {%  if isComplete == 0 %}
+                             <div class = "s_btn btn_green" id="congestion-btn">
+                                 진행중
+                             </div>
+                        {% elif isComplete == 1 %}
+                            <div class = "s_btn btn_red" id="congestion-btn">
+                                종료
+                            </div>
+                        {%  endif %}
+
+                {% endfor %}
+            </div>
+        </div>
+
+        </div>
+    </div>
+
+{% endblock %}

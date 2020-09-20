@@ -2,17 +2,27 @@ from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.contrib.auth.decorators import login_required
 from .models import *
 from .auth import *
+from .user import *
 from django.views.decorators.http import require_POST
 import json
 from django.http import JsonResponse
+from django.contrib import auth
+from django.core.paginator import Paginator
 
 # Create your views here.
 
 def login(request):
     return render(request, 'login.html')
 
+def logout(request):
+    auth.logout(request)
+    return redirect('index')
+
 def index(request):
-    return render(request, 'index.html')
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    else:
+        return render(request, 'index.html')
 
 def error(request):
     return render(request, 'error.html')
@@ -62,6 +72,9 @@ def createMeeting(request):
 @login_required
 def generateQR(request, type, token):
     return generateQRimage("{0}/auth/{1}/{2}/code".format(settings.DEFAULT_DOMAIN, type, token))
+
+def successQR(request):
+    return render(request, 'authSuccess.html')
 
 @login_required
 def authQR(request, type, token):
@@ -120,14 +133,51 @@ def refreshQR(request, type):
         response = {"isChanged": 1, 'codeQR': "{0}/auth/{1}/{2}/code".format(settings.DEFAULT_DOMAIN, type, token_now), 'token': token_now}
         return JsonResponse(response)
 
+
 # Related to DashBoard
 
 @login_required
 def dashboard(request):
-    places = Place.objects.filter(owner=request.user).order_by('-id')[:3]
-    meetings = Meeting.objects.filter(owner=request.user).order_by('-id')[:3]
-    return render(request, 'dashboard.html', {'places': places, 'meetings': meetings})
+    username = refreshUsername(request)
+    places = Place.objects.filter(owner=request.user).order_by('-id')[:1]
+    meetings = Meeting.objects.filter(owner=request.user).order_by('-id')[:1]
 
+    # 모임 정책에 대한 진행도 출력을 위한 사항
+    today = datetime.datetime.today().date()
+
+    if meetings[0].expired_at > today:
+        isComplete = 0
+    else:
+        isComplete = 1
+
+
+    return render(request, 'dashboard/dashboard.html', {'places': places, 'meetings': meetings, 'username': username, "isComplete":isComplete})
+
+
+@login_required
+def listPlace(request):
+    targets = Place.objects.filter(owner=request.user).order_by('-id')
+    paginator = Paginator(targets, 3)
+    page = request.GET.get('page')
+    # dashboard/place로만 접근했을 때 1번 pagination에 현재 표시를 위해
+    if page == None:
+        page = 1
+    page_targets = paginator.get_page(page)
+    return render(request, 'dashboard/list.html', {"targets": page_targets, 'type' :0, 'page': int(page)})
+
+@login_required
+def listMeeting(request):
+    targets = Meeting.objects.filter(owner=request.user).order_by('-id')
+    paginator = Paginator(targets, 3)
+    page = request.GET.get('page')
+    # dashboard/place로만 접근했을 때 1번 pagination에 현재 표시를 위해
+    if page == None:
+        page = 1
+    page_targets = paginator.get_page(page)
+    # 모임 정책에 대한 진행도 출력을 위한 사항
+    today = datetime.datetime.today().date()
+
+    return render(request, 'dashboard/list.html', {"targets": page_targets, 'type': 1, 'today':today, 'page': int(page)})
 
 @login_required
 def detailPlace(request, placeId):

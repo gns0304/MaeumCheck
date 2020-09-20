@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{%  block template %}
+    {% load static %}
+{% endblock %}
+
+{% block title %}
+    공간정책 - 마음체크
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/stylesheet_base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/stylesheet_list.css' %}">
+{% endblock %}
+
+{% block body %}
+
+      <div id ="container">
+        <div id = "title" style="float: left" >
+            <div id = "title-left">
+                <a href="{% url 'dashboard' %}">대시보드로 이동</a>
+                    {% if type == 0 %}
+                        <h3>공간정책</h3>
+                    {% elif type == 1 %}
+                        <h3>모임정책</h3>
+                    {% endif %}
+            </div>
+          <div id = "title-add">
+               {% if type == 0 %}
+                   <a href="{% url 'registerPlace' %}">+</a>
+               {% elif type == 1 %}
+                   <a href="{% url 'registerMeeting' %}">+</a>
+               {% endif %}
+          </div>
+
+        </div>
+
+        <div id = "panel">
+            <div id = "list">
+
+                {% if type == 0 %}
+                    {% for target in targets %}
+                        <div id = "item">
+
+                            <div id = "name">
+                                <h1>
+                                    <a href="{% url 'detailPlace' target.id %}">{{target.name}}</a>
+                                    <a><img src="{% static 'img/edit.png' %}"></a>
+                                    <a><img src="{% static 'img/trash.png' %}"></a>
+                                </h1>
+
+                            </div>
+                            <div id = "detail">
+                                <h2>{{ target.address }}</h2>
+                                <h2><img src="{% static 'img/user.png' %}"> {{ target.nowPeople }}/{{ target.maxPeople }}</h2>
+                                {%  if target.congestion == 0 %}
+                                    <div class = "s_btn btn_green" id="congestion-btn">
+                                        여유
+                                    </div>
+                                    {% elif target.congestion == 1 %}
+                                        <div class = "s_btn btn_green" id="congestion-btn">
+                                            보통
+                                        </div>
+                                    {% elif target.congestion == 2 %}
+                                        <div class = "s_btn btn_green" id="congestion-btn">
+                                            혼잡
+                                        </div>
+                                {%  endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% elif type == 1 %}
+                    {% for target in targets %}
+                        <div id = "item">
+                        <div id = "name">
+                                <h1>
+                                    <a href="{% url 'detailMeeting' target.id %}">{{target.name}}</a>
+                                    <a><img src="{% static 'img/edit.png' %}"></a>
+                                    <a><img src="{% static 'img/trash.png' %}"></a>
+                                </h1>
+                        </div>
+                        <div id = "detail">
+                            <h2>{{ target.address }}</h2>
+                            <h2><img src="{% static 'img/event.png' %}"> {{ target.expired_at }}</h2>
+                            {%  if target.expired_at > today %}
+                                <div class = "s_btn btn_green" id="congestion-btn">
+                                    진행중
+                                </div>
+                            {% else %}
+                                <div class = "s_btn btn_red" id="congestion-btn">
+                                    종료
+                                </div>
+                            {%  endif %}
+                        </div>
+
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+
+            <div id = "pagenation">
+            <ul>
+                    <li style="margin-left: -30px">
+                        {%if targets.has_previous%}
+                        <a href="?page={{targets.previous_page_number}}">
+                        {%endif%}
+                        이전
+                        {%if targets.has_previous%}
+                        </a>
+                        {%endif%}
+                    </li>
+
+                {%for i in targets.paginator.page_range%}
+
+                    {% if page == i %}
+                        <li id="present"><a href="?page={{i}}">{{i}}</a></li>
+                    {% else %}
+                        <li><a href="?page={{i}}">{{i}}</a></li>
+                    {% endif %}
+
+
+                {%endfor%}
+                <li>
+                    {%if targets.has_next%}
+                       <a href="?page={{targets.next_page_number}}">
+                    {%endif%}
+                    다음
+                    {%if targets.has_next%}
+                        </a>
+                    {%endif%}
+                </li>
+            </ul>
+            </div>
+
+
+            </div>
+
+        </div>
+      </div>
+
+
+
+
+
+{% endblock %}

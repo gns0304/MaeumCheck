@@ -3,7 +3,8 @@ from django.urls import path, re_path
 import QR.views
 
 urlpatterns = [
-    path('login', QR.views.login, name="login"),
+
+    path('logout', QR.views.logout, name="logout"),
     path('', QR.views.index, name="index"),
     path('error', QR.views.error, name="error"),
 
@@ -11,6 +12,8 @@ urlpatterns = [
     path('dashboard', QR.views.dashboard, name="dashboard"),
     path('dashboard/place/<int:placeId>', QR.views.detailPlace, name="detailPlace"),
     path('dashboard/meeting/<int:meetingId>', QR.views.detailMeeting, name="detailMeeting"),
+    path('dashboard/place', QR.views.listPlace, name="listPlace"),
+    path('dashboard/meeting', QR.views.listMeeting, name="listMeeting"),
 
     # 공간 및 모임 등록관련
     path('dashboard/register/place', QR.views.registerPlace, name="registerPlace"),

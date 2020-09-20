@@ -1,0 +1,56 @@
+
+#title {
+    position: absolute;
+    bottom: 65%;
+    padding-top : 10%;
+    height: 100px;
+    width: 100%;
+  }
+
+#title h3{
+    color : white;
+    text-align: center;
+    line-height: 10pt;
+    font-size: 16pt;
+}
+
+#title img{
+    width: 60px;
+
+}
+
+#title .box{
+    width: fit-content;
+    margin: 0 auto 30% auto;
+}
+
+#panel{
+    height: 35%;
+}
+
+@keyframes slideInFromLeft {
+ from{
+     height: 0%;
+ }
+    to{
+        height: 35%;
+    }
+}
+
+#panel .box {
+    width: 90%;
+    margin: 0 auto;
+    padding-top: 25%;
+}
+
+#login{
+    margin: 0 auto;
+    width: fit-content;
+    height: 100%;
+}
+
+#login img {
+    width: 100%;
+}
+
+

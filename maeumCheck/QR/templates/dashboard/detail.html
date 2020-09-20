@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+
     <title>Title</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
@@ -18,18 +20,18 @@
 <div id="toast" style="display: none;">hello</div>
 
 <script>
-    check = setInterval(function () { // .like 버튼을 클릭 감지
+    check = setInterval(function () {
         var token= $("#QRcode").attr('token');
-        $.ajax({ // ajax로 서버와 통신
-            type: "POST", // 데이터를 전송하는 방법
-            url: "{% url 'refreshQR' type %}", // 통신할 url을 지정
+        $.ajax({
+            type: "POST",
+            url: "{% url 'refreshQR' type %}",
             data: {
                 'token': token,
                 "id":"{{ target.id }}",
                 'csrfmiddlewaretoken': '{{ csrf_token }}',
                 dataType: "json",
             },
-            success: function (response) { // 성공
+            success: function (response) {
                 if (response.isChanged == 1) {
                     $("#QRcode").attr('src', response.codeQR);
                     $("#QRcode").attr('token', response.token);
