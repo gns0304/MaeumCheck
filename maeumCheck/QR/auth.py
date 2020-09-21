@@ -55,6 +55,8 @@ def registerToken(type, spaceId, day):
         place = get_object_or_404(Place, pk=spaceId)
         place.recentQRToken = token
         place.tokenRegistered_at = datetime.datetime.now()
+        nowPeople = place.nowPeople
+        place.nowPeople = nowPeople + 1
         place.save()
 
 

@@ -63,8 +63,8 @@ class Record(models.Model):
     objects = InheritanceManager()
 
 class PlaceRecord(Record):
-    Token = models.ForeignKey(PlaceQRToken, on_delete=models.PROTECT)
+    Token = models.ForeignKey(PlaceQRToken, on_delete=models.CASCADE)
 
 
 class MeetingRecord(Record):
-    Token = models.ForeignKey(MeetingQRToken, on_delete=models.PROTECT)
+    Token = models.ForeignKey(MeetingQRToken, on_delete=models.CASCADE)

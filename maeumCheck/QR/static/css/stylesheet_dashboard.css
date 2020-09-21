@@ -72,12 +72,29 @@ font-size : 10pt;
 
 
 
-.panel-object h2 {
+#panel .panel-object h2 {
     font-weight:500;
     margin-top:10px;
     margin-bottom : -10px;
-    font-size:1.3em
+    color : black;
 }
+
+#panel .panel-object h2 a:link {
+    font-weight:bold;
+    margin-top:10px;
+    margin-bottom : -10px;
+    color : black;
+    font-size:16pt;
+}
+
+#panel .panel-object a:visited {
+    font-weight:bold;
+    margin-top:10px;
+    margin-bottom : -10px;
+    color : black;
+    font-size:16pt;
+}
+
 
 .panel-object p {
     font-weight:400;

@@ -21,3 +21,4 @@ urlpatterns = [
     path('', include('QR.urls')),
     path('accounts/', include('allauth.urls')),
 ]
+

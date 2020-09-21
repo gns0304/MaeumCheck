@@ -35,7 +35,7 @@
                 </div>
                 <div class = "panel-object">
                     {% for place in places.all %}
-                        <h2> {{ place.name }}</h2>
+                        <h2><a href="{% url 'detailPlace' place.id %}">{{ place.name }}</a></h2>
                         <p>{{ place.address }}</p>
                             {%  if place.congestion == 0 %}
                                 <div class = "s_btn btn_green" id="congestion-btn">
@@ -65,7 +65,7 @@
                 </div>
             <div class = "panel-object">
                 {% for meeting in meetings.all %}
-                    <h2> {{ meeting.name }}</h2>
+                    <h2> <a href="{% url 'detailMeeting' meeting.id %}">{{ meeting.name }}</a></h2>
                     <p> {{ meeting.address }}</p>
                         {%  if isComplete == 0 %}
                              <div class = "s_btn btn_green" id="congestion-btn">

@@ -45,8 +45,8 @@
                             <div id = "name">
                                 <h1>
                                     <a href="{% url 'detailPlace' target.id %}">{{target.name}}</a>
-                                    <a><img src="{% static 'img/edit.png' %}"></a>
-                                    <a><img src="{% static 'img/trash.png' %}"></a>
+                                    <a href="{% url 'editPlace' target.id %}"><img src="{% static 'img/edit.png' %}"></a>
+                                    <a href="{% url 'deletePlace' target.id %}"><img src="{% static 'img/trash.png' %}"></a>
                                 </h1>
 
                             </div>
@@ -75,14 +75,14 @@
                         <div id = "name">
                                 <h1>
                                     <a href="{% url 'detailMeeting' target.id %}">{{target.name}}</a>
-                                    <a><img src="{% static 'img/edit.png' %}"></a>
-                                    <a><img src="{% static 'img/trash.png' %}"></a>
+                                    <a href="{% url 'editMeeting' target.id %}"><img src="{% static 'img/edit.png' %}"></a>
+                                    <a href="{% url 'deleteMeeting' target.id %}"><img src="{% static 'img/trash.png' %}"></a>
                                 </h1>
                         </div>
                         <div id = "detail">
                             <h2>{{ target.address }}</h2>
                             <h2><img src="{% static 'img/event.png' %}"> {{ target.expired_at }}</h2>
-                            {%  if target.expired_at > today %}
+                            {%  if target.expired_at >= today %}
                                 <div class = "s_btn btn_green" id="congestion-btn">
                                     진행중
                                 </div>

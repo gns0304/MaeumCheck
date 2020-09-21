@@ -1,45 +1,64 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no">
-
-    <title>Title</title>
+{% extends 'base.html' %}
+{%  block template %}
+    {% load static %}
+{% endblock %}
+{% block title %}
+    {{ target.name }} - 마음체크
+{% endblock %}
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/stylesheet_base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/stylesheet_detail.css' %}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <style>
-        #toast{width: 250px; height: 20px; height:auto; position: fixed; left: 50%; margin-left:-125px; bottom: 100px; z-index: 9999; background-color: #383838; color: #F0F0F0; padding: 10px; text-align:center; border-radius: 2px; -webkit-box-shadow: 0px 0px 24px -1px rgba(56, 56, 56, 1); -moz-box-shadow: 0px 0px 24px -1px rgba(56, 56, 56, 1); box-shadow: 0px 0px 24px -1px rgba(56, 56, 56, 1);}
-    </style>
-
-</head>
-<body>
-
-<h1>{{ target.name }}</h1>
-<p>{{ target.address }}</p>
-<img id="QRcode" src="{{ codeQR }}" token="{{ token }}">
-
-<div id="toast" style="display: none;">hello</div>
-
-<script>
-    check = setInterval(function () {
-        var token= $("#QRcode").attr('token');
-        $.ajax({
-            type: "POST",
-            url: "{% url 'refreshQR' type %}",
-            data: {
-                'token': token,
-                "id":"{{ target.id }}",
-                'csrfmiddlewaretoken': '{{ csrf_token }}',
-                dataType: "json",
-            },
-            success: function (response) {
-                if (response.isChanged == 1) {
-                    $("#QRcode").attr('src', response.codeQR);
-                    $("#QRcode").attr('token', response.token);
-                    $('#toast').fadeIn(500).delay(1100).fadeOut(500);
-                };
-            },
-        });
-    },3000)
-</script>
-</body>
-</html>
+{% endblock %}
+{% block body %}
+    <div id = "container">
+        <div id = "title" style="float: left" >
+            <div id = "title-left">
+                <a href="{% url 'dashboard' %}">대시보드로 이동</a>
+                    {% if type == 0 %}
+                        <h3>공간 QR 인증</h3>
+                    {% elif type == 1 %}
+                        <h3>모임 QR 인증</h3>
+                    {% endif %}
+            </div>
+            <div id = "title-add">
+               {% if type == 0 %}
+                   <a href="{% url 'listPlace' %}">×</a>
+               {% elif type == 1 %}
+                   <a href="{% url 'listMeeting' %}">×</a>
+               {% endif %}
+          </div>
+        </div>
+        <div id = "panel">
+            <div id = "list">
+                <h1>{{ target.name }}</h1>
+                <h2>{{ target.address }}</h2>
+            </div>
+            <div id = "code">
+                <img id="QRcode" src="{{ codeQR }}" token="{{ token }}">
+            </div>
+        </div>
+    </div>
+    <script>
+        check = setInterval(function () {
+            var token= $("#QRcode").attr('token');
+            $.ajax({
+                type: "POST",
+                url: "{% url 'refreshQR' type %}",
+                data: {
+                    'token': token,
+                    "id":"{{ target.id }}",
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    dataType: "json",
+                },
+                success: function (response) {
+                    if (response.isChanged == 1) {
+                        $('#QRcode').fadeOut(400).delay(800).fadeIn(400);
+                        $("#QRcode").attr('src', response.codeQR);
+                        $("#QRcode").attr('token', response.token);
+                    };
+                },
+            });
+        },2000)
+    </script>
+{% endblock %}

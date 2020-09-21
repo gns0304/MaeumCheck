@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{%  block template %}
+    {% load socialaccount %}
+    {% providers_media_js %}
+    {% load static %}
+{% endblock %}
+
+{% block title %}
+    인증완료 - 마음체크
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/stylesheet_base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/stylesheet_authSuccess.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{% endblock %}
+
+{% block body %}
+
+    <div id ="container">
+        <div id = "title" >
+            <div class="box">
+                <img src="{% static 'img/logo_white.png' %}">
+            </div>
+
+            <h3>체크완료</h3>
+            <h3>마음이 정상적으로 체크되었습니다</h3>
+        </div>
+        <div id = "panel">
+            <div id = "login">
+                <div class = "box">
+                        <a href="{% url 'dashboard'%}">
+                            <img src = "{% static 'img/dashboard_white.png' %}">
+                        </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+
+
+
+

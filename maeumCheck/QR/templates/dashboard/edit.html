@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{%  block template %}
+    {% load static %}
+{% endblock %}
+
+{% block title %}
+    공간정책생성 - 마음체크
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/stylesheet_base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/stylesheet_register.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.js"></script>
+    <script src="{% static "js/DaumPostcode.js" %}"></script>
+    <script src="{% static "js/validateCheck.js" %}"></script>
+{% endblock %}
+
+{% block body %}
+
+    <div id ="container">
+
+        <div id = "title" style="float: left" >
+            <div id = "title-left">
+                <a href="{% url 'dashboard' %}">대시보드로 이동</a>
+                    {% if type == 0 %}
+                        <h3>공간정책편집</h3>
+                    {% elif type == 1 %}
+                        <h3>모임정책편집</h3>
+                    {% endif %}
+            </div>
+          <div id = "title-add">
+               {% if type == 0 %}
+                   <a href="{% url 'listPlace' %}">×</a>
+               {% elif type == 1 %}
+                   <a href="{% url 'listMeeting' %}">×</a>
+               {% endif %}
+          </div>
+        </div>
+
+        <div id="panel">
+            <div id = "list">
+                {% if type == 0 %}
+                   <form id="createTarget" action="{% url 'updatePlace' target.id %}" method="post">
+               {% elif type == 1 %}
+                   <form id="createTarget" action="{% url 'updateMeeting' target.id %}" method="post">
+               {% endif %}
+                    {% csrf_token %}
+                    <div>
+                        <label for = "name" class="label">정책정보</label>
+                        <input type="text" class="textbox" name="name" id="name" placeholder="{{ target.name }}" disabled required>
+                    </div>
+                    <div>
+                        <label for = "postcode" class="label">주소정보</label>
+                        <textarea class="textbox textarea" id="address" name="address" placeholder="{{ target.address }}" disabled required></textarea>
+                    </div>
+                    <div>
+                        {% if type == 0 %}
+                            <label for = "expiredDate" class="label">현재인원수</label>
+                            <input type="number" class="textbox" id="nowquantity" name="nowquantity" min="0" value="{{ target.nowPeople }}" required>
+                            <label for = "expiredDate" class="label">최대인원수</label>
+                            <input type="number" class="textbox" id="quantity" name="quantity" min="0" value="{{ target.maxPeople }}" required>
+                        {% elif type == 1 %}
+                            <label for = "expiredDate" class="label">모임종료날짜</label>
+                            <input type="date" class="textbox" id="expiredDate" name="expiredDate"  required>
+                            <label for = "expiredDate" class="label">{{ target.expired_at }}</label>
+                        {% endif %}
+                    </div>
+                        {% if type == 0 %}
+                            <input type="submit" class="l_btn btn_pink" id="submit" value="공간정책수정">
+                        {% elif type == 1 %}
+                            <input type="submit" class="l_btn btn_pink" id="submit" value="모임정책수정">
+                        {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

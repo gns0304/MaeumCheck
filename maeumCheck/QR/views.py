@@ -29,11 +29,24 @@ def error(request):
 
 @login_required
 def registerPlace(request):
-    return render(request, 'registerPlace.html')
+    return render(request, 'dashboard/register.html', {"type": 0})
 
 @login_required
 def registerMeeting(request):
-    return render(request, 'registerMeeting.html')
+    return render(request, 'dashboard/register.html', {"type": 1})
+
+@login_required
+def editPlace(request, placeId):
+    place = get_object_or_404(Place, pk=placeId)
+    return render(request, 'dashboard/edit.html', {"type": 0, "target": place})
+
+@login_required
+def editMeeting(request, meetingId):
+    meeting = get_object_or_404(Meeting, pk=meetingId)
+    if meeting.expired_at < datetime.datetime.today().date():
+        return render(request, 'error.html', {"errorCode" : "종료된 모임은 수정할 수 없습니다."})
+    else:
+        return render(request, 'dashboard/edit.html', {"type": 1, "target": meeting})
 
 @login_required
 def createPlace(request):
@@ -71,10 +84,10 @@ def createMeeting(request):
 
 @login_required
 def generateQR(request, type, token):
-    return generateQRimage("{0}/auth/{1}/{2}/code".format(settings.DEFAULT_DOMAIN, type, token))
+    return generateQRimage("{0}/auth/{1}/{2}/".format(settings.DEFAULT_DOMAIN, type, token))
 
 def successQR(request):
-    return render(request, 'authSuccess.html')
+    return render(request, 'auth/authSuccess.html')
 
 @login_required
 def authQR(request, type, token):
@@ -192,12 +205,54 @@ def detailPlace(request, placeId):
 @login_required
 def detailMeeting(request, meetingId):
     meeting = get_object_or_404(Meeting, pk=meetingId)
-    token = meeting.recentQRToken
-    codeQR = settings.DEFAULT_DOMAIN + '/auth/1/' + token + '/code'
-    if meeting.owner == request.user:
-        return render(request, 'dashboard/detail.html', {'target': meeting, 'codeQR': codeQR, 'token': token, 'type': 1})
+    if meeting.expired_at < datetime.datetime.today().date():
+        return render(request, 'error.html', {"errorCode" : "종료된 모임은 접근할 수 없습니다."})
     else:
-        return render(request, 'error.html', {"errorCode": "권한이 없습니다."})
+        token = meeting.recentQRToken
+        codeQR = settings.DEFAULT_DOMAIN + '/auth/1/' + token + '/code'
+        if meeting.owner == request.user:
+            return render(request, 'dashboard/detail.html', {'target': meeting, 'codeQR': codeQR, 'token': token, 'type': 1})
+        else:
+            return render(request, 'error.html', {"errorCode": "권한이 없습니다."})
 
+@login_required
+def deletePlace(request, placeId):
+    place = get_object_or_404(Place, pk=placeId)
 
+    if place.owner == request.user:
+        placeTokens = PlaceQRToken.objects.filter(target=place.id)
 
+        if len(placeTokens) != 0:
+            errorCode = "{}에 대한 만료되지 않은 방문기록이 존재하여 삭제할 수 없습니다.".format(place.name)
+            return render(request, 'error.html', {"errorCode": errorCode})
+        else:
+            place.delete()
+            return redirect('listPlace')
+
+@login_required
+def deleteMeeting(request, meetingId):
+    meeting = get_object_or_404(Meeting, pk=meetingId)
+
+    if meeting.owner == request.user:
+        meetingTokens = MeetingQRToken.objects.filter(target=meeting.id)
+
+        if len(meetingTokens) != 0:
+            errorCode = "{}에 대한 만료되지 않은 방문기록이 존재하여 삭제할 수 없습니다.".format(meeting.name)
+            return render(request, 'error.html', {"errorCode": errorCode})
+        else:
+            meeting.delete()
+            return redirect('listMeeting')
+
+@login_required
+def updatePlace(request, placeId):
+    place = get_object_or_404(Place, pk=placeId)
+    place.maxPeople = request.POST.get('quantity')
+    place.nowPeople = request.POST.get('nowquantity')
+    place.save()
+    return redirect('listPlace')
+
+def updateMeeting(request, meetingId):
+    meeting = get_object_or_404(Meeting, pk=meetingId)
+    meeting.expired_at = request.POST.get('expiredDate')
+    meeting.save()
+    return redirect('listMeeting')

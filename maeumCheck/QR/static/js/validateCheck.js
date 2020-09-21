@@ -1,5 +1,5 @@
     $(function() {
-        $("#createPlace").validate(
+        $("#createTarget").validate(
 
         );
         $.extend( $.validator.messages, {
